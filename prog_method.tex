@@ -1,0 +1,293 @@
+
+\documentclass{beamer}
+\usepackage{beamerthemeshadow}
+
+\setbeamertemplate{headline}{%
+\leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=5ex,dp=1.125ex]{palette quaternary}%
+    \insertsectionnavigationhorizontal{\paperwidth}{}{}
+		\insertsubsectionnavigationhorizontal{\paperwidth}{}{\hskip0pt plus1filll}
+    \end{beamercolorbox}%
+  }
+}
+
+\begin{document}
+\title{Programming methodology}  
+\subtitle{Proving correctness of algorithms}
+\author{Gergely Feldhoffer}
+\date{ }
+
+
+
+\frame{\titlepage} 
+
+%\frame{\frametitle{Table of contents}\tableofcontents} 
+
+
+\section{Course} 
+\frame{
+\frametitle{Overview of the course topic} 
+\begin{itemize}
+	\item Correctness of algorithms
+	\item Proof of correctness
+	\item Method to prove correctness
+	\item Proofs for basic algorithms
+	\item Some practical tools at the end of the semester concerning software correctness (gdb, valgrind)
+\end{itemize}
+}
+
+\frame{
+\frametitle{Course material} 
+\begin{itemize}
+	\item This material is originated from Dijsktra and Hoare using advanced mathematical toolkit as temporal logic
+	\item We will discuss the same terms defined with basic set theory
+	\item This model was created by {\'A}kos F{\'o}thi using Hungarian definitions
+	\item
+	$\rightarrow$ so be prepared, there are no English sources but this presentation
+\end{itemize}
+
+}
+
+
+\frame{
+\frametitle{What to do for your grade} 
+\begin{itemize}
+	\item At end of October or at the beginning of November you will write a test. The possible outcomes are
+\begin{itemize}
+	\item You are awarded with the best grade without taking the exam
+	\item You can attend to the exam
+	\item You have to write the test again at the last week
+	
+\end{itemize}
+	\item At the exam you have to convince me about the clarity of your understanding of the theory of algorithm proving. 
+\end{itemize}
+
+}
+
+\section{Introduction} 
+
+\subsection{Sets}
+
+\frame{
+\frametitle{Relations}
+\begin{itemize}
+	\item You should be familiar with the terms of set, element, $\emptyset$, direct multiplication $A \times B$, elementary tuple $(x,y) \in A \times B$, relation $F \subseteq A \times B$, set size $\left|A\right|$
+	\item $ \mathcal{D}_F = \{ \forall x \colon F(x) \neq \emptyset \} $ is the \textbf{domain} of the relation F
+	\item $ \mathcal{R}_F = \{ \forall y \colon { \exists x \colon F(x)=y } \} $ is the \textbf{range} of the relation F
+	\item An $F$ relation is function if $\forall x \in \mathcal{D}_F \colon \left|F(X)\right| = 1$
+\end{itemize} 
+}
+
+\subsection{State space}
+\frame{\frametitle{State space}
+\begin{block}{Def: State space}
+Let $A_1, A_2, \ldots , A_n$ finite or countably infinite not empty sets. In this case $A=A_1 \times A_2 \times \ldots \times A_n$ is called \textbf{state space}, and $A_i$ are type value sets.
+\end{block}
+
+}
+
+\subsection{Strings}
+\frame{\frametitle{Strings}
+\begin{itemize}
+	\item Let $A$ be a set. We call all possible finite strings of $A$ as $A^*$. This operator is the Kleene star.
+	\item If $\alpha \in A^*$ then the elements of the string can be expressed like $\alpha_1, \alpha_2, \ldots, \alpha_{|\alpha|}$
+	\item The last element of the string can be also expressed like $\tau(\alpha)$
+	\item $A^{\infty}$ is all possible infinite strings on set $A$.
+	\item We will use $A^{**} = A^* \cup A^\infty$ for all finite and infinite string on set $A$
+	\item The function $\tau$ is not defined on infinite strings.
+	\item The reduction of a string is a process where every finite direct recurrences of the same elements are replaced with only one element, like $red(\{1 2 3 3 3 4 4 5\})=\{1 2 3 4 5\}$
+\end{itemize}
+}
+
+\section{Program, Solution} 
+
+\subsection{Problem}
+\frame{\frametitle{Problem}
+\begin{block}{Def.: Problem}
+We will call $F \subseteq A \times A$ relation a \textbf{problem} on state space $A$
+\end{block}
+
+For a starting state $a \in A$ the possible valid solutions are the set $F(a)$. 
+
+\begin{itemize}
+	\item A relation is \textbf{deterministic} if $\forall a \in A \colon \left|F(a)\right| \leq 1$
+	\item If a problem does not assign anything to an $a \in A$ that means that there are no demands for this starting state. A possible misunderstanding would be to think that there are no valid answers for the state, but we will use this state in quite an opposite way, so $F(a) = \emptyset$ and $F(a)=A$ are equivalent in some way.
+\end{itemize}
+
+}
+
+\subsection{Program}
+
+\frame{\frametitle{Program}
+\begin{block}{Def.: Program}
+$S \subseteq A \times A^{**}$ is program if \\
+\begin{enumerate}
+	\item $\mathcal{D}_S = A$
+	\item $\forall a \in A : \forall \alpha \in S(a) \colon \alpha_1=a$
+	\item $\forall \alpha \in \mathcal{R}_S \colon \alpha = red(\alpha) $
+\end{enumerate} 
+\end{block}
+
+\begin{itemize}
+	\item The strings of states are the temporal stages of the machine as the program runs. Different starting states can mean different input values.
+	\item The program has to start from every state
+	\item The program must start in the starting state
+	\item In each step something has to happen
+
+\end{itemize}
+
+}
+
+\frame{\frametitle{Program and variables}
+
+\begin{block}{Def: Variable}
+Let $A=A_1 \times A_2 \times \ldots \times A_n$ be a state space. In this case for each $i \in [1 \ldots n] : f_i \subseteq A \times A_i = \{ x \in A \colon f_i(x)=proj_{A_i}(x)  \} $
+\end{block}
+
+So the variable is not a single one dimensional subspace of the state space but the projection function to it. The subspace is the set containing the possible elements eg. integer numbers. The variable is more than a set, it has history as the program runs. For each $S(a)$ a projection of this string is how the given variable changes its value.
+
+}
+
+
+\subsection{Program function}
+\frame{\frametitle{Program function}
+\begin{block}{Def.: Program function}
+If $S \subseteq A \times A^{**}$ is program then we will define $p(S) \subseteq A \times A$ \textbf{program function} of $S$ as
+\begin{enumerate}
+	\item $\mathcal{D}_{p(S)} = \{ a \in A \colon S(a) \subseteq A^* \}$
+	\item $\forall a \in \mathcal{D}_{p(S)} \colon p(S)(a) = \{ b \in A \colon { \exists a \in S(a) \colon b = \tau(a) } \} $
+\end{enumerate}
+\end{block}
+\begin{itemize}
+	\item So the program function is defined only where the program certainly terminates,
+	\item and assigns to starting state $a$ the set of the possible outcomes of that state $a$ at the end of the program run.
+\end{itemize}
+
+}
+
+\subsection{Solution}
+\frame{\frametitle{Solution}
+\begin{block}{Def.: Solution}
+An $S \subseteq A \times A^{**}$ program \textbf{solves} the problem $F$ if
+\begin{enumerate}
+	\item $\mathcal{D}_F \subseteq \mathcal{D}_{p(S)}$
+	\item $\forall a \in \mathcal{D}_F \colon p(S)(a) \subseteq F(a) $
+\end{enumerate}
+\end{block}
+
+\begin{itemize}
+	\item So the program should certainly terminate where there are any demands for a starting state,
+	\item and for each starting state the set of possible outcomes of the program run must be ones of the valid outcomes.
+	\item if the program is deterministic then this can be expressed as $p(S)(a) \in F(a)$, and if both the program and the problem is deterministic, then $p(S)(a) = F(a)$
+\end{itemize}
+
+}
+
+\frame{\frametitle{}
+
+stop reading now
+
+}
+
+
+
+\section{Specification}
+\frame{\frametitle{todo}todo}
+
+\section{Elementary programs}
+\frame{\frametitle{todo}
+todo
+}
+
+\section{Structures}
+\frame{\frametitle{todo}
+todo
+}
+
+\section{Deduction}
+\frame{\frametitle{todo}
+todo
+}
+
+\section{Recursion}
+\frame{\frametitle{todo}
+todo
+}
+
+\section{Tools}
+\frame{\frametitle{todo}
+todo
+}
+
+
+%\frame{\frametitle{lists with pause}
+%\begin{itemize}
+%\item Introduction to  \LaTeX \pause 
+%\item Course 2 \pause 
+%\item Termpapers and presentations with \LaTeX \pause 
+%\item Beamer class
+%\end{itemize} 
+%}
+%
+%\subsection{Lists II}
+%\frame{\frametitle{numbered lists}
+%\begin{enumerate}
+%\item Introduction to  \LaTeX  
+%\item Course 2 
+%\item Termpapers and presentations with \LaTeX 
+%\item Beamer class
+%\end{enumerate}
+%}
+%\frame{\frametitle{numbered lists with pause}
+%\begin{enumerate}
+%\item Introduction to  \LaTeX \pause 
+%\item Course 2 \pause 
+%\item Termpapers and presentations with \LaTeX \pause 
+%\item Beamer class
+%\end{enumerate}
+%}
+%
+%\section{Section no.3} 
+%\subsection{Tables}
+%\frame{\frametitle{Tables}
+%\begin{tabular}{|c|c|c|}
+%\hline
+%\textbf{Date} & \textbf{Instructor} & \textbf{Title} \\
+%\hline
+%WS 04/05 & Sascha Frank & First steps with  \LaTeX  \\
+%\hline
+%SS 05 & Sascha Frank & \LaTeX \ Course serial \\
+%\hline
+%\end{tabular}}
+%
+%
+%\frame{\frametitle{Tables with pause}
+%\begin{tabular}{c c c}
+%A & B & C \\ 
+%\pause 
+%1 & 2 & 3 \\  
+%\pause 
+%A & B & C \\ 
+%\end{tabular} }
+%
+%
+%\section{Section no. 4}
+%\subsection{blocs}
+%\frame{\frametitle{blocs}
+%
+%\begin{block}{title of the bloc}
+%bloc text
+%\end{block}
+%
+%\begin{exampleblock}{title of the bloc}
+%bloc text
+%\end{exampleblock}
+%
+%
+%\begin{alertblock}{title of the bloc}
+%bloc text
+%\end{alertblock}
+%}
+
+\end{document}
