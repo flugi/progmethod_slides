@@ -184,16 +184,209 @@ An $S \subseteq A \times A^{**}$ program \textbf{solves} the problem $F$ if
 
 }
 
-\frame{\frametitle{}
 
-stop reading now
+
+
+\section{Specification}
+\subsection{Precondition, postcondition}
+\frame{\frametitle{Truth set}
+If $R \subseteq A \times \mathbb{L}$ then
+\begin{itemize}
+	\item 
+\textbf{Truth set} of R : \\
+$\lceil R \rceil = \{ a \in A \colon R(A) = \{true\} \}$
+	\item 
+
+\textbf{Weak truth set} of R : \\
+$\lfloor  R \rfloor = \{ a \in A \colon true \in R(A) \}$
+	\item 
+
+Note that if $R$ is function then $\lceil R \rceil = \lfloor R \rfloor$	
+	\item 
+
+$Q \rightarrow R \Rightarrow \lceil Q \rceil \subseteq \lceil R \rceil$
+\end{itemize}
+
+}
+
+
+\frame{\frametitle{Precondition, postcondition}
+
+\begin{itemize}
+	\item 
+
+We will use the term \textbf{precondition} as a condition which is true for all starting state of the state space where we have demand for the output, and the 
+
+  \item
+
+\textbf{postcondition} which is true for all valid input-output pairs and false for everything else.
+
+	\item 
+
+If $S \subseteq A \times A^{**}$ is a program any $R \subseteq A \times \mathbb{L}$ condition on state space $A$ can be used as precondition or postcondition
+
+	\item
+Our goal is to express the problem using only precondition and postcondition.
+
+\end{itemize}
+
+}
+
+\subsection{Weakest precondition}
+\frame{\frametitle{Weakest precondition}
+\begin{block}{Def: Weakest precondition}
+$S \subseteq A \times A^{**}$ is a program, $R \subseteq A \times \mathbb{L}$ is a condition. $R$ is the \textbf{weakest precondition} of $S$ if
+
+$\lceil wp(S,R) \rceil = \{ a \in \mathcal{D}_{p(S)} \colon
+p(S)(a) \subseteq \lceil R \rceil \}$
+
+\end{block}
+
+So which is the section of the state space where if we run $S$ program, we will certainly arrive in states where $R$ is true.
 
 }
 
 
 
-\section{Specification}
-\frame{\frametitle{todo}todo}
+
+\frame{\frametitle{Properties of weakest precondition}
+Let $S \subseteq A \times A^{**}$ be a program, and $Q,R
+\subseteq A \times \mathbb{L}$,
+
+then
+
+\begin{itemize}
+\item
+Principle 'Exclusion of miracles': $wp(S,False) = False$ where $False \subseteq A \times \mathbb{L} = \forall a \in A \colon False(a) = false $
+
+\item
+
+Monotonicity: If $Q \Rightarrow R$ then $wp(S,Q) \Rightarrow wp(S,R)$
+
+
+
+	\item $wp(S,Q) \wedge wp(S,R) = wp(S, Q \wedge R) $
+	\item $wp(S,Q) \vee wp(S,R) = wp(S, Q \vee R) $
+\end{itemize}
+}
+
+
+\subsection{Parameter space}
+\frame{
+\frametitle{Parameter space}
+
+\begin{block}{Def: Parameter space}
+Let $F \subseteq A \times A$ problem. We name set $B$ \textbf{parameter space} of $F$ if $\exists F_1, F_2 \colon F_1 \subseteq A \times B \wedge F_2 \subseteq B \times A \wedge F = F_2 \circ F_1$ 
+\end{block}
+
+where $R_1 \circ R_2$ is composition of relations meaning if 
+$a \in (R_1 \circ R_2)(b)$ then $a \in R_1(R_2(b))$
+
+note that the order of arguments of expression $R_1 \circ R_2$ and the order of evaluation is opposite.
+
+The parameter space can be subspace of the state space, restricting to the input variables. This will be our choice from now on, however, this definition allows to use even the whole state space.
+}
+
+
+\subsection{Specification}
+\frame{\frametitle{Specification}
+\begin{block}{Theorem: Theorem of Specification}
+Let $F \subseteq A \times A$ problem, $B$ is a parameter space of $F$, $F_1 \subseteq A \times B \wedge F_2 \subseteq B \times A \wedge F = F_2 \circ F_1$, and $b \in B$
+
+$\lceil Q_b \rceil = \{ a \in A \colon (a,b) \in F_1 \} = inv(F_1)(b)$
+
+$\lceil R_b \rceil = \{ a \in A \colon (b,a) \in F_2 \} = F_2(b)$
+
+In this case if $\forall b \in B \colon Q_b \Rightarrow wp(S,R_b)$ then program $S$ solves problem $F$
+
+\end{block}
+\vfill
+
+Which means if we can express our demands with precondition and postcondition, then we defined a problem, and we also give a possible method to check whether a program is a solution or not.
+
+}
+
+\frame{\frametitle{Proof of theorem of specification}
+Let $F \subseteq A \times A$ problem, $B$ is a parameter space of $F$, $F_1 \subseteq A \times B \wedge F_2 \subseteq B \times A \wedge F = F_2 \circ F_1$, and $b \in B$
+
+$\lceil Q_b \rceil = \{ a \in A \colon (a,b) \in F_1 \} = inv(F_1)(b)$
+
+$\lceil R_b \rceil = \{ a \in A \colon (b,a) \in F_2 \} = F_2(b)$
+
+In this case if $\forall b \in B \colon Q_b \Rightarrow wp(S,R_b)$ then program $S$ solves problem $F$
+
+Proof:
+\begin{itemize}
+	\item 
+
+$\mathcal{D}_F \subseteq \mathcal{D}_{p(S)}$ since every $a \in \mathcal{D}_F \colon \exists b \in B \colon a \in \lceil Q_b \rceil$ because of $F_1$. Since $Q_b \Rightarrow wp(S,R_b)$ so $a \in \lceil Q_b \rceil \subseteq \lceil wp(S,R_b) \rceil \subseteq \mathcal(D)_{p(S)}$
+
+\item
+$\forall a \in \mathcal{D}_F \colon p(S)(a) \subseteq F(a)$ since if $a \in \mathcal{D}_F$ and $b \in B \wedge a \in \lceil Q_b \rceil$ then
+$p(S)(a) \subseteq \lceil R_b \rceil = F_2(b) \subseteq F_2(F_1(a)) = F(a)$
+
+\end{itemize}
+
+}
+
+\subsection{Example}
+\frame{\frametitle{Example of specification}
+Example: addition of two numbers
+
+$A = \mathbb{Z}_x \times \mathbb{Z}_y \times \mathbb{Z}_z $
+
+$B = \mathbb{Z}_{x'} \times \mathbb{Z}_{y'} $
+
+$Q_{x'(b), y'(b)}(a) = (x(a) = x'(b) \wedge y(a) = y'(b))$
+
+$R_{x'(b), y'(b)}(a) = (x(a) = x'(b) \wedge y(a) = y'(b) \wedge z(a)=x'(b)+y'(b))$
+
+\vfill
+We will use $x'$ and $y'$ are represent the starting value of the variable as it is in the parameter space.
+
+\vfill
+This formalism can be simplified since each raw variable is defined on $A$ and each parameter is defined on $B$ ..
+
+}
+
+\frame{\frametitle{Example of specification}
+Example: addition of two numbers
+
+$A = \mathbb{Z}_x \times \mathbb{Z}_y \times \mathbb{Z}_z $
+
+$B = \mathbb{Z}_{x'} \times \mathbb{Z}_{y'} $
+
+$Q_{x', y'}(a) = (x = x' \wedge y = y')$
+
+$R_{x', y'}(a) = (x = x' \wedge y = y' \wedge z=x'+y')$
+
+\vfill
+
+..and since $Q$ and $R$ has to be defined on the whole parameter space..
+}
+
+\frame{\frametitle{Example of specification}
+Example: addition of two numbers
+
+$A = \mathbb{Z}_x \times \mathbb{Z}_y \times \mathbb{Z}_z $
+
+$B = \mathbb{Z}_{x'} \times \mathbb{Z}_{y'} $
+
+$Q : x = x' \wedge y = y'$
+
+$R : x = x' \wedge y = y' \wedge z=x'+y'$
+
+\vfill
+
+..we arrived to the formalism we will use for specifications.
+}
+
+\frame{\frametitle{no more slides to read now}
+
+no more slides to read now
+
+}
+
 
 \section{Elementary programs}
 \frame{\frametitle{todo}
