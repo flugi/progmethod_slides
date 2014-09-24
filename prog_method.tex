@@ -96,7 +96,7 @@ Let $A_1, A_2, \ldots , A_n$ finite or countably infinite not empty sets. In thi
 	\item $A^{\infty}$ is all possible infinite strings on set $A$.
 	\item We will use $A^{**} = A^* \cup A^\infty$ for all finite and infinite string on set $A$
 	\item The function $\tau$ is not defined on infinite strings.
-	\item The reduction of a string is a process where every finite direct recurrences of the same elements are replaced with only one element, like $red(\{1 2 3 3 3 4 4 5\})=\{1 2 3 4 5\}$
+	\item The reduction of a string is a process where every finite direct recurrences of the same elements are replaced with only one element, like $red(\langle1 2 3 3 3 4 4 5 \rangle)=\langle 1 2 3 4 5 \rangle$
 \end{itemize}
 }
 
@@ -381,22 +381,186 @@ $R : x = x' \wedge y = y' \wedge z=x'+y'$
 ..we arrived to the formalism we will use for specifications.
 }
 
-\frame{\frametitle{no more slides to read now}
-
-no more slides to read now
-
-}
 
 
 \section{Elementary programs}
-\frame{\frametitle{todo}
-todo
+\subsection{Elementary program}
+\frame{\frametitle{Elementary program}
+
+\begin{block}{Elementary program}
+
+$S \subseteq A \times A^{**}$ program is \textbf{elementary} if $\forall a \in A \colon \forall \alpha \in S(a) \colon ( \exists b \in A \colon \alpha = red( \langle  a b \rangle ) ) \vee \alpha = \langle a a \ldots \rangle$
+
+\end{block}
+So a program is elementary if it does exactly one step or hangs.
+
+We will use some special elementary programs such as SKIP, ABORT, and assignment.
+
+
 }
 
-\section{Structures}
-\frame{\frametitle{todo}
-todo
+\subsection{Skip Abort}
+\frame{\frametitle{Skip Abort}
+\begin{block}{SKIP}
+$SKIP = \{ (a,\alpha) \in A \times A^{**} \colon \alpha = \langle a \rangle  \} $
+\end{block}
+\begin{block}{ABORT}
+$ABORT = \{ (a,\alpha) \in A \times A^{**} \colon \alpha = \langle a a a \ldots \rangle  \} $
+
+\end{block}
 }
+
+
+\subsection{Assignment}
+\frame{\frametitle{Assignment}
+Every other elementary programs are general assignments. To handle assignments, we will use a state transition function $E$ to describe it: $E \subseteq A \times A$, so if we are in state $a$ we step to (one of the) state(s) $E(a)$.
+\vfill
+So if we have an $E$ as $\mathcal{D}_E = A$, then \\
+$S_E = \{ (a,\alpha) \in A \times A^{**} \colon \alpha = red(\langle a b \rangle) \colon b \in E(a) \}$
+}
+
+\frame{
+\frametitle{Assignment} 
+
+In general $\mathcal{D}_E = A$ is not true, in these cases where the state transition function is not defined, the assignment should abort.
+\begin{block}{Assignment}
+$ S_E = \{ (a,\alpha) \in A \times A^{**} \colon a \in \mathcal{D}_E \wedge \alpha = red(\langle a b \rangle) \wedge b \in E(a) \} \cup $\\$ \cup \{ (a,\alpha) \in A \times A^{**} \colon a \notin \mathcal{D}_E \wedge \alpha = \langle a a a \ldots \rangle \} $
+\end{block}
+
+Note that every state transition can be an assignment. Each machine support a limited possibilities of state transitions, that is why we can not solve NP complete tasks in one step.
+
+Computer science calls esoteric imaginary state transitions as oracle. Interestingly it is proven that on a machine which supports every usual operation and includes one NP complete task, on that machine P=NP. The hard part is to prove that NP on this machine is not stronger.
+}
+
+\subsection{Program functions}
+\frame{\frametitle{Program functions of elementary programs}
+$wp(SKIP,R) = R$
+\vfill
+$wp(ABORT,R) = False$
+\vfill
+$wp(S_E, R) = \{ a \in \mathcal{D}_E \colon E(a) \subseteq \lceil R \rceil \}$
+\vfill
+$\mathcal{D}_{p(SKIP)} = A$ \\
+$\forall a \in A \colon p(SKIP)(a) = a$
+\vfill
+$\mathcal{D}_{p(ABORT)} = \emptyset$
+\vfill
+$p(S_E) = E$
+}
+
+
+\frame{\frametitle{Notations}
+Example:
+$A = \mathbb{Z}_x \times \mathbb{Z}_y $\\
+$ E= \{ (a,b) \in A \times A \colon y(b)=2*x(a) \wedge x(b)=x(a) \} $
+\\
+We will be noted as $y := 2x$, this is a simple assignment
+\vfill
+$ E= \{ (a,b) \in A \times A \colon y(b)=2*x(a) \wedge x(b)=x(a)+1 \} $
+\\
+as $x, y :=x+1, 2x$, this is a parallel assignment
+\vfill
+$ E= \{ (a,b) \in A \times A \colon y(b) \in X \} $
+\\
+as $y :\in X$, this is a value choice
+
+}
+
+
+\section{Structures}
+\subsection{Sequence}
+\frame{\frametitle{Program structures}
+We will use three kind of program structure: sequence, branch, and loop.
+\vfill
+The sequence means running two program after each other. The branch means state dependent conditional program execution. The loop is state dependent repeated execution of a program.
+\vfill
+Note that every program can be used as part of program structure. Every usage of a program structure results a program.
+}
+
+\frame{\frametitle{Sequence}
+\begin{block}{Def: Sequence}
+Let $S_1, S_2 \subseteq A \times A^{**}$ be programs. We will call $S \subseteq A \times A^{**}$ as \textbf{Sequence of $S_1$ and $S_2$} if $\forall a \in A \colon$ \\
+$S(a) = \{ \alpha \in A^\infty \colon \alpha \in S_1(a) \} \cup$ \\
+$\cup \{ red(concat(\alpha, \beta)) \in A^{**} \colon \alpha \in S_1(a) \cap A^* \wedge \beta \in S_2(\tau(\alpha)) \}$
+\end{block}
+}
+
+\subsection{Branch}
+\frame{\frametitle{Branch}
+\begin{block}{Def: Branch}
+Let $\pi_1, \ldots, \pi_n: A \rightarrow \mathbb{L}$ be conditions, $S_1, \ldots, S_n$ programs on $A$.
+We will call $IF \subseteq A \times A^{**}$ program as \textbf{Branch} of $(\pi_1:S_1, \ldots, \pi_n:S_n)$ if $\forall a \in A$:
+\[
+IF(a) = \bigcup_{i=1}^{n} w_i(a) \cup w_0(a)
+\]
+
+\[
+\textrm{where }  \forall i \in [ 1 .. n ] \colon 
+w_i(a) = \left\{
+\begin{array}{ll}
+S_i(a)    &  \textrm{if } \pi_i (a),\\
+\emptyset &  \textrm{else} 
+\end{array}
+\right.
+\]
+
+\[
+w_0(a) = \left\{
+\begin{array}{ll}
+\langle a a a \ldots \rangle    & \textrm{if } \forall i \in [1 .. n ] \colon \neg \pi_i (a),
+\\
+\emptyset &  \textrm{else} 
+\end{array}
+\right.
+%
+\]
+
+\end{block}
+
+}
+
+\frame{\frametitle{Branch}
+\begin{itemize}
+	\item Note that a branch can be non-deterministic: if more than one condition are true in a state each of the routes can happen.
+	\item In states where no branch condition is true, the branch must abort. This is not the usual approach, as C switch without default performs SKIP instead of ABORT.
+\end{itemize}
+}
+
+\subsection{Loop}
+\frame{\frametitle{Loop}
+\begin{block}{Def: Loop}
+Let $\pi$ be a condition and $S_0$ a program on $A$. We will call $DO \subseteq A \times A^{**}$ a \textbf{Loop} if
+\begin{itemize}
+	\item $\forall a \notin \lceil \pi \rceil \colon DO(a) = \{ \langle a \rangle \}$
+	\item $\forall a \in \lceil \pi \rceil \colon DO(a) =$
+\end{itemize}
+\[
+\begin{array}{lll}
+& \{\alpha \in A^{**} \colon \exists \alpha^1, \ldots, \alpha^n \in A^{**} \colon & (1) \\
+
+& \alpha = red(concat(\alpha^1, \ldots, \alpha^n)) \wedge \alpha^1 \in S_0(a) \wedge & (2) \\
+
+& \wedge ( \forall i \in [ 1 .. n-1 ] \colon \alpha^i \in A^* \wedge & (3) \\
+
+& \wedge \alpha^{i+1} \in S_0(\tau(\alpha^i)) \wedge \pi(\tau(\alpha^i))) \wedge & (4) \\
+
+& \wedge (( \alpha^n \in A^\infty) \vee (\alpha^n \in A^* \wedge \neg \pi(\tau(\alpha^n))))\} & (5) \\
+
+\cup & \{ a \in A^\infty \colon \forall i \in \mathbb{N} \colon & (6) \\
+
+& \exists \alpha^i \in A^* \colon \alpha = red(concat(\alpha^1, \alpha^2, \ldots)) \wedge & (7) \\
+
+& \alpha^1 \in S_0(a) \wedge (\forall i \in \mathbb{N} \colon \alpha^i \in A^* \wedge & (8) \\
+
+& \alpha^{i+1} \in S_0(\tau(\alpha^i)) \wedge \pi(\tau(\alpha^i)))\} & (9) \\
+
+\end{array}
+\]
+\end{block}
+
+}
+
+
 
 \section{Deduction}
 \frame{\frametitle{todo}
