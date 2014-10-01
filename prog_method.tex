@@ -568,15 +568,139 @@ So the loop is the repetition of the loop body where the resulting program strin
 \end{itemize}
 
 }
-\frame{\frametitle{don't read any further}
-don't read any further
+\subsection{Program functions of program structures}
+\frame{\frametitle{Program function of sequence}
+Composition of relations $R_1 \subseteq A \times B, R_2 \subseteq B \times C$ : $R_2 \circ R_1 = \{ (a,c) \in A \times C \colon \exists b \in B \colon (a,b) \in R_1 \wedge (b,c) \in R_2 \}$
+\vfill
+Strict composition of relations $R_1 \subseteq A \times B, R_2 \subseteq B \times C$ : $R_2 \odot R_1 = \{ (a,c) \in A \times C \colon \exists b \in B \colon (a,b) \in R_1 \wedge (b,c) \in R_2 \wedge R_1(a) \subseteq \mathcal{D}_{R_2}\}$
+\vfill
+
+\begin{block}{Theorem: Program function of sequence}
+If $S=(S_1;S_2)$ sequence of $S_1, S_2$ programs\\
+$p(S) = p(S_1) \odot p(S_2)$
+\end{block}
+
 }
+
+\frame{\frametitle{Program function of branch}
+\begin{block}{Theorem: Program function of branch}
+If $IF(\pi_1:S_1, \ldots, \pi_n:S_n) \subseteq A \times A^{**}$ is a branch, then \\
+$\mathcal{D}_{p(IF)}=\{ a \in A \colon \bigvee_{i=1}^n \pi_i(a) \wedge \forall i \in [1 \ldots n ] \colon \pi_i(a) \Rightarrow a \in \mathcal{D}_{p(S_i)} \}$
+
+\[\forall a \in \mathcal{D}_{p(IF)} \colon p(IF)(a) = \bigcup_{i=1}^n pw_i(a)\]
+
+
+\[
+\textrm{where }  \forall i \in [ 1 .. n ] \colon 
+pw_i(a) = \left\{
+\begin{array}{ll}
+p(S_i)(a)    &  \textrm{if } \pi_i (a),\\
+\emptyset &  \textrm{else} 
+\end{array}
+\right.
+\]
+
+
+\end{block}
+So the program function of IF is defined in states where at least one condition is true, and no $S_i$ hangs there, so it will certeanly terminate, and every possible pathway is included where the condition is true.
+}
+
+\frame{\frametitle{Program function of loop}
+Any homogeneous $R$ relation can be composed with itself. $R^n = R \circ R^{n-1}$ where $R^0$ is the identity.
+\begin{block}{Def: Exclosure of relation}
+If $R \subseteq A \times A$ is a relation, the exclosure of $R$ is 
+$\bar{R} \subseteq A \times A$ where \\
+$\mathcal{D}_{\bar{R}} = \{ a \in A \colon \nexists \alpha \in A^\infty \colon \alpha_1 \in R(A) \wedge \forall i \in \mathbb{N} \colon \alpha_{i+1} \in R(\alpha_i) \} $
+
+$\forall a \in \mathcal{D}_{\bar{R}} \colon \bar{R}(a) = \{ b \in A | \exists k \in \mathbb{N}_0 \colon b \in R^k(a) \wedge b \notin \mathcal{D}_{R}  \} $
+\end{block}
+
+So the resulting relation contains every $(a,b)$ pair where there is a path to reach $b$ from $a$, and there is no step further from $b$ available.
+}
+
+\frame{\frametitle{Program function of loop}
+If $R \subseteq A \times A $ and $B \subset A$ then $R|_B = \{ (a,b) \in B \times A \colon (a,b) \in R\}$
+This is the restriction of the relation to a subset.
+
+\begin{block}{Def: Restriction to condition}
+If $R \subseteq A \times A $ and $\pi \subseteq A \times \mathbb{L}$ then $R|_\pi = (R \cap (\lceil \pi \rceil \times A)) \cup \{ (a,a) \in A \times A \colon a \in \lceil \pi \rceil \setminus \mathcal{D}_R \}$
+
+\end{block}
+So the restriction to a condition differs from the restriction to the truth set of the condition as it is broadened with identities, making $\mathcal{D}_{R|_\pi}=\lceil \pi \rceil$
+}
+
+\frame{\frametitle{Program function of loop}
+\begin{block}{Theorem: Program function of loop}
+If $DO(S_0,\pi)$ is a loop then\\
+$p(DO) = \overline{p(S_0)|_\pi}$
+\end{block}
+}
+
+
 
 
 \section{Deduction}
-\frame{\frametitle{todo}
-todo
+\subsection{Deduction rules}
+\frame{\frametitle{Deduction rules}
+We will give a set of deduction rules for program structures. As every program can be expressed as a hierarchical structure where the nodes of the hierarchy are program structures and the leaves are elementary programs, rules for each structure is enough to deduce every program.
+
 }
+
+\subsection{Sequence}
+\frame{\frametitle{Deduction rules for sequence}
+\begin{block}{Deduction rules for sequence}
+Let $S=(S_1;S_2)$ be a sequence, and $Q,R,Q' \subseteq A \times \mathbb{L}$ statements on A. If
+\begin{enumerate}
+	\item $Q \Rightarrow wp(S_1, Q')$ and
+	\item $Q' \Rightarrow wp(S_2, R)$, 
+\end{enumerate}
+then $Q \Rightarrow wp(S,R)$.
+\end{block}
+
+}
+
+\subsection{Branch}
+\frame{\frametitle{Deduction rules for branch}
+\begin{block}{Deduction rules for branch}
+Let $IF=(\pi_1:S_1 \ldots \pi_n:S_n)$ be a branch and $Q,R \subseteq A \times \mathbb{L}$ statements on A. If
+\begin{enumerate}
+	\item $Q \Rightarrow \bigvee_{i=1}^n \pi_i$, and
+	\item $\forall i \in [1 \ldots n] \colon Q \wedge \pi_i \Rightarrow wp(S_i, R)$,
+\end{enumerate}
+then $Q \Rightarrow wp(IF, R)$.
+\end{block}
+
+}
+
+\subsection{Loop}
+\frame{\frametitle{Deduction rules for loop}
+\begin{block}{Deduction rules for loop}
+Let $DO(\pi, S_0)$ be a loop, $P,Q,R \subseteq A \times \mathbb{L}$ statements and $t: A \rightarrow \mathbb{Z}$ function. If
+\begin{enumerate}
+	\item $Q \Rightarrow P$
+	\item $P \wedge \neg \pi \Rightarrow R$
+	\item $P \wedge \pi \Rightarrow wp(S_0, P)$
+	\item $P \wedge \pi \Rightarrow t>0$
+	\item $P \wedge \pi \wedge t=t_0 \Rightarrow wp(S_0, t<t_0)$
+\end{enumerate}
+then $Q \Rightarrow wp(SO,R)$
+\end{block}
+}
+
+\frame{\frametitle{Deduction rules for loop}
+$P$ is the loop invariant, and $t$ is the terminating function. 
+
+$P$ must be true all along the loop and even after the last iteration. $P$ definitely not equals $\pi$, as the second role shows. $P$ is the connection between the start and the end of the loop iteration chain.
+
+The hard part of proving the correctness of a program is to guess $P$.
+
+$t$ should be used to confirm that the loop is not infinite. The value of $t(a)$ must be decreased along the loop body borders in each iteration, and must be positive. As an integer function infinite regression cannot happen.
+}
+
+\frame{\frametitle{behold, adventurer}
+no slides beyond
+}
+
 
 \section{Recursion}
 \frame{\frametitle{todo}
