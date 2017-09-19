@@ -74,7 +74,7 @@
 \begin{itemize}
 	\item You should be familiar with the terms of set, element, $\emptyset$, direct multiplication $A \times B$, elementary tuple $(x,y) \in A \times B$, relation $F \subseteq A \times B$, set size $\left|A\right|$
 	\item $ \mathcal{D}_F = \{ \forall x \colon F(x) \neq \emptyset \} $ is the \textbf{domain} of the relation F
-	\item $ \mathcal{R}_F = \{ \forall y \colon { \exists x \colon F(x)=y } \} $ is the \textbf{range} of the relation F
+	\item $ \mathcal{R}_F = \{ \forall y \colon { \exists x \colon y \in F(x) } \} $ is the \textbf{range} of the relation F
 	\item An $F$ relation is function if $\forall x \in \mathcal{D}_F \colon \left|F(X)\right| = 1$
 \end{itemize} 
 }
@@ -319,7 +319,7 @@ Proof:
 \begin{itemize}
 	\item 
 
-$\mathcal{D}_F \subseteq \mathcal{D}_{p(S)}$ since every $a \in \mathcal{D}_F \colon \exists b \in B \colon a \in \lceil Q_b \rceil$ because of $F_1$. Since $Q_b \Rightarrow wp(S,R_b)$ so $a \in \lceil Q_b \rceil \subseteq \lceil wp(S,R_b) \rceil \subseteq \mathcal(D)_{p(S)}$
+$\mathcal{D}_F \subseteq \mathcal{D}_{p(S)}$ since every $a \in \mathcal{D}_F \colon \exists b \in B \colon a \in \lceil Q_b \rceil$ because of $F_1$. Since $Q_b \Rightarrow wp(S,R_b)$ so $a \in \lceil Q_b \rceil \subseteq \lceil wp(S,R_b) \rceil \subseteq \mathcal{D}_{p(S)}$
 
 \item
 $\forall a \in \mathcal{D}_F \colon p(S)(a) \subseteq F(a)$ since if $a \in \mathcal{D}_F$ and $b \in B \wedge a \in \lceil Q_b \rceil$ then
