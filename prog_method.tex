@@ -117,6 +117,25 @@ For a starting state $a \in A$ the possible valid solutions are the set $F(a)$.
 
 }
 
+\frame{\frametitle{Problem example}
+
+\begin{block}{Addition 1}
+$ A = \mathbb{N} \times \mathbb{N} \times \mathbb{N}$
+
+$F = \{ ((a,b,c),(d,e,f)) : f = a+b \} $
+\end{block}
+
+\begin{block}{Addition 2}
+$ A = \mathbb{N} \times \mathbb{N} \times \mathbb{N}$
+
+$F = \{ ((a,b,c),(d,e,f)) : d=a \wedge e=b \wedge f = a+b \} $
+\end{block}
+
+Problem ``Addition 1'' lets solving programs to change the input values, ``Addititon 2'' does not.
+
+}
+
+
 \subsection{Program}
 
 \frame{\frametitle{Program}
@@ -136,6 +155,29 @@ $S \subseteq A \times A^{**}$ is program if \\
 	\item In each step something has to happen
 
 \end{itemize}
+
+}
+
+\frame{\frametitle{Program example}
+
+\begin{block}{Shift on $[1,4]$}
+$A = \{1,2,3,4\} $
+
+$S = \{ (1, < 1,2 >) , (2, < 2,3 >) (3, < 3,4 >) (4, < 4,1 >)  \}$
+\end{block}
+
+\begin{block}{Increment}
+$A = \mathbb{N} $
+
+$\forall a \in A : S(a) = < a,a+1 > $
+\end{block}
+
+\begin{block}{Addition}
+$A = \mathbb{N} \times \mathbb{N} \times \mathbb{N} $
+
+$\forall (x,y,z) \in A : S((x,y,z)) = red( < (x,y,z),(x,y,x+y) > )$
+\end{block}
+
 
 }
 
@@ -235,7 +277,7 @@ Our goal is to express the problem using only precondition and postcondition.
 \subsection{Weakest precondition}
 \frame{\frametitle{Weakest precondition}
 \begin{block}{Def: Weakest precondition}
-$S \subseteq A \times A^{**}$ is a program, $R \subseteq A \times \mathbb{L}$ is a condition. $R$ is the \textbf{weakest precondition} of $S$ if
+$S \subseteq A \times A^{**}$ is a program, $R \subseteq A \times \mathbb{L}$ is a condition. The \textbf{weakest precondition} of $S$ to $R$ can be expressed with its truth set:
 
 $\lceil wp(S,R) \rceil = \{ a \in \mathcal{D}_{p(S)} \colon
 p(S)(a) \subseteq \lceil R \rceil \}$
@@ -276,7 +318,7 @@ Monotonicity: If $Q \Rightarrow R$ then $wp(S,Q) \Rightarrow wp(S,R)$
 \frametitle{Parameter space}
 
 \begin{block}{Def: Parameter space}
-Let $F \subseteq A \times A$ problem. We name set $B$ \textbf{parameter space} of $F$ if $\exists F_1, F_2 \colon F_1 \subseteq A \times B \wedge F_2 \subseteq B \times A \wedge F = F_2 \circ F_1$ 
+Let $F \subseteq A \times A$ problem. We name the set $B$ as \textbf{parameter space} of $F$ if $\exists F_1, F_2 \colon F_1 \subseteq A \times B \wedge F_2 \subseteq B \times A \wedge F = F_2 \circ F_1$ 
 \end{block}
 
 where $R_1 \circ R_2$ is composition of relations meaning if 
